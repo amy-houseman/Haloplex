@@ -17,5 +17,6 @@ cd /scratch/c.c21087028/haloplex/H021
 
 FORWARDFASTQ=/scratch/c.c21087028/haloplex/H021/RawPEreads/{}R1_001.fastq.gz
 REVERSEFASTQ=/scratch/c.c21087028/haloplex/H021/RawPEreads/{}R2_001.fastq.gz
+TRIMMEDOUTPUTFILES=/scratch/c.c21087028/haloplex/H021/trimmedreads/{}/
 
-java -jar SurecallTrimmer_v4.0.1.jar -fq1 $FORWARDFASTQ
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "mkdir {} | java -jar SurecallTrimmer_v4.0.1.jar -fq1 $FORWARDFASTQ -fq2 $REVERSEFASTQ -hs -out_loc $TRIMMEDOUTPUTFILES
