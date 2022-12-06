@@ -1,1 +1,26 @@
+#!/bin/bash --login
+#SBATCH -J AmyHouseman_extractgenes
+#SBATCH -o %x.stdout.%J.%N
+#SBATCH -e %x.stderr.%J.%N
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH -p htc
+#SBATCH --account=scw1581
+#SBATCH --mail-type=ALL          # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=HousemanA@cardiff.ac.uk     # Where to send mail
+#SBATCH --array=1-182
+#SBATCH --qos=maxjobs500
 
+module load parallel
+
+set -eu 
+
+cd /scratch/c.c21087028/haloplex/H021/AGeNT_v1.7
+
+FORWARDFASTQ=/scratch/c.c21087028/haloplex/H021/RawPEreads/{}R1_001.fastq.gz
+REVERSEFASTQ=/scratch/c.c21087028/haloplex/H021/RawPEreads/{}R2_001.fastq.gz
+EXOME_IDs_FILE=/scratch/c.c21087028/haloplex/H021/HaloplexIDs/HaloplexIDs_txt
+TRIMMEDOUTPUTFILES=/scratch/c.c21087028/haloplex/H021/trimmedreads/{}/
+
+
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -jar SurecallTrimmer_v4.0.1.jar -fq1 $FORWARDFASTQ -fq2 $REVERSEFASTQ -hs -out_loc $TRIMMEDOUTPUTFILES"
