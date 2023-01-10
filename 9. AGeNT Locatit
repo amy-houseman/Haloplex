@@ -29,4 +29,5 @@ COVEREDBEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_fil
 OUTPUTLOCATITBAM=/scratch/c.c21087028/haloplex/H021/8.localit/1.output_localit_bam/{}localit.bam
 
 
-sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -jar LocatIt_v4.0.1.jar -t $TEMPFOLDER -D -U -IB -OB -b $AMPLICON_BEDFILE -o $OUTPUTLOCATITBAM input_bam_file_name $INPUTUNSORTEDBAM index2_fastq_file_1 $INPUTFORWARD_FASTQ index2_fastq_file_2 $INPUTREVERSE_FASTQ -l $COVEREDBEDFILE"
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -jar LocatIt_v4.0.1.jar -t $TEMPFOLDER -D -U -IB -OB -b $AMPLICON_BEDFILE -l $COVEREDBEDFILE input_bam_file_name $INPUTUNSORTEDBAM index2_fastq_file_1 $INPUTFORWARD_FASTQ index2_fastq_file_2 $INPUTREVERSE_FASTQ -o $OUTPUTLOCATITBAM"
+
