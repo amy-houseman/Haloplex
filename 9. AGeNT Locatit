@@ -25,9 +25,8 @@ INPUTUNSORTEDBAM=/scratch/c.c21087028/haloplex/H021/7.samtoolsview/{}PE_samtools
 INPUTFORWARD_FASTQ=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R1.cutadapt-trimmed.fq.gz
 INPUTREVERSE_FASTQ=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R2.cutadapt-trimmed.fq.gz
 AMPLICON_BEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_files/31850-1411660364_Amplicons.bed
-COVEREDBEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_files/31850-1411660364_Covered.bed
+COVEREDBEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_files/31850-1411660364_Covered.bed 
 OUTPUTLOCATITBAM=/scratch/c.c21087028/haloplex/H021/8.localit/1.output_localit_bam/{}localit.bam
 
 
-sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -jar LocatIt_v4.0.1.jar -t $TEMPFOLDER -D -U -IB -OB -b $AMPLICON_BEDFILE -l $COVEREDBEDFILE input_bam_file_name $INPUTUNSORTEDBAM index2_fastq_file_1 $INPUTFORWARD_FASTQ index2_fastq_file_2 $INPUTREVERSE_FASTQ -o $OUTPUTLOCATITBAM"
-
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -Xmx12G -jar LocatIt_v4.0.1.jar -t $TEMPFOLDER -D -U -IB -OB -b $AMPLICON_BEDFILE -o $OUTPUTLOCATITBAM $INPUTUNSORTEDBAM $INPUTFORWARD_FASTQ $INPUTREVERSE_FASTQ"
