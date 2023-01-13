@@ -1,0 +1,38 @@
+#!/bin/bash --login
+#SBATCH -J AmyHouseman_deepvariantJOB27
+#SBATCH -o %x.stdout.%J.%N
+#SBATCH -e %x.stderr.%J.%N
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH -p htc
+#SBATCH --account=scw1581
+#SBATCH --mail-type=ALL          # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=HousemanA@cardiff.ac.uk     # Where to send mail
+#SBATCH --array=1-182
+#SBATCH --qos=maxjobs500
+
+module purge
+module load parallel
+module load singularity
+
+EXOME_IDs_FILE=/scratch/c.c21087028/haloplex/H021/HaloplexIDs/HaloplexIDs_txt
+HG38_REFERENCE=/scratch/c.c21087028/haloplex/H021/6.bwamem/HG38_GCA_000001405.15_GRCh38_no_alt_analysis_set/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna
+SORTEDBAM=/scratch/c.c21087028/haloplex/H021/9.samtoolssort/{}PE_samtoolssorted_GCA_000001405.15_GRCh38_no_alt_analysis_set_locatit.bam
+BED_REGIONS=/scratch/c.c21087028/haloplex/H021/12.deepvariant/bed/31850-1411660364_Covered_hg38_deepvariant_nogenes.bed
+
+OUTPUT_VCF=/scratch/c.c21087028/haloplex/H021/12.deepvariant/{}PE_output_GCA_000001405.15_GRCh38_no_alt_analysis_set.vcf.gz
+OUTPUT_GVCF=/scratch/c.c21087028/haloplex/H021/12.deepvariant/{}PE_output_GCA_000001405.15_GRCh38_no_alt_analysis_set.g.vcf.gz
+INTERMEDIATE_RESULTS=/scratch/c.c21087028/haloplex/H021/12.deepvariant/intermediateresults/{}PE_output_intermediate
+
+# Set bash error trapping to exit on first error.
+set -eu
+
+cd /scratch/c.c21087028/
+
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "singularity run -B /usr/lib/locale/:/usr/lib/locale/ containers/deepvariant_1.3.0.sif /opt/deepvariant/bin/run_deepvariant --model_type=WES \
+--ref=$HG38_REFERENCE \
+--reads=$SORTEDBAM \
+--regions=$BED_REGIONS \
+--output_vcf=$OUTPUT_VCF \
+--output_gvcf=$OUTPUT_GVCF \
+--intermediate_results_dir=$INTERMEDIATE_RESULTS"
