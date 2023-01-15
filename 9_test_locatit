@@ -1,0 +1,32 @@
+#!/bin/bash --login
+#SBATCH -J AmyHouseman_agent_locatit_2.0.5
+#SBATCH -o %x.stdout.%J.%N
+#SBATCH -e %x.stderr.%J.%N
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH -p htc
+#SBATCH --account=scw1581
+#SBATCH --mail-type=ALL          # Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=HousemanA@cardiff.ac.uk     # Where to send mail
+#SBATCH --array=1
+#SBATCH --qos=maxjobs500
+#SBATCH --time=0-10:00
+
+module load parallel
+
+set -eu 
+
+cd /scratch/c.c21087028/containers/AGeNT_3.0.6/agent/lib
+
+EXOME_IDs_FILE=/scratch/c.c21087028/haloplex/H021/HaloplexIDs/HaloplexIDs_txt
+TEMPFOLDER=/scratch/c.c21087028/haloplex/H021/8.localit/tempfiles/
+
+INPUTUNSORTEDBAM=/scratch/c.c21087028/haloplex/H021/7.samtoolsview/{}PE_samtoolsview_GCA_000001405.15_GRCh38_no_alt_analysis_set.bam
+INPUTFORWARD_FASTQ=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R1.cutadapt-trimmed.fq.gz
+INPUTREVERSE_FASTQ=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R2.cutadapt-trimmed.fq.gz
+AMPLICON_BEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_files/31850-1411660364_Amplicons.bed
+COVEREDBEDFILE=/scratch/c.c21087028/haloplex/H021/8.localit/haloplex_agilent_files/31850-1411660364_Covered.bed 
+OUTPUTLOCATITBAM=/scratch/c.c21087028/haloplex/H021/8.localit/1.output_localit_bam/{}localit.bam
+
+
+sed -n "${SLURM_ARRAY_TASK_ID}p" $EXOME_IDs_FILE | parallel -j 1 "java -Xmx12G -jar LocatIt_v4.0.1.jar -t $TEMPFOLDER -D -U -IB -OB -b $AMPLICON_BEDFILE -o $OUTPUTLOCATITBAM $INPUTUNSORTEDBAM $INPUTFORWARD_FASTQ $INPUTREVERSE_FASTQ"
