@@ -24,22 +24,10 @@ CONTAINER_FILE=bwa-0.7.17.sif
 MY_CONTAINER_PATH=/scratch/$USER/containers
 CONTAINER=$MY_CONTAINER_PATH/$CONTAINER_FILE
 EXOME_IDs_FILE=/scratch/c.c21087028/haloplex/H021/HaloplexIDs/HaloplexIDs_txt
-HG38_REFERENCE=/scratch/c.c21087028/haloplex/H021/6.bwamem/HG38_GCA_000001405.15_GRCh38_no_alt_analysis_set_refandindex/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna
+HG38_REFERENCE=/scratch/c.c21087028/haloplex/H021/6.bwamem/HG38_GCA_000001405.15_GRCh38_no_alt_analysis_set/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna
 TRIMMED_FORWARD_OUTPUT=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R1.cutadapt-trimmed.fq.gz
 TRIMMED_REVERSE_OUTPUT=/scratch/c.c21087028/haloplex/H021/4.cutadapt/{}R2.cutadapt-trimmed.fq.gz
 BWAMEM_SAM=/scratch/c.c21087028/haloplex/H021/6.bwamem/sam/{}PE_bwamem_GCA_000001405.15_GRCh38_no_alt_analysis_set.sam
-
-if [ "$SLURM_ARRAY_TASK_ID" == "1" ]
-then
-  mkdir -p $MY_CONTAINER_PATH
-  [ -f "$CONTAINER" ] || ssh cl1 wget -O $CONTAINER https://wotan.cardiff.ac.uk/containers/$CONTAINER_FILE
-  mkdir $WDPATH
-fi
-
-while [ ! -d $WDPATH ]
-do
-  sleep 10
-done
 
 cd /scratch/c.c21087028/
 
