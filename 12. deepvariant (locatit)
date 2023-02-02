@@ -10,6 +10,8 @@
 #SBATCH --mail-user=HousemanA@cardiff.ac.uk     # Where to send mail
 #SBATCH --array=1-182
 #SBATCH --qos=maxjobs500
+#SBATCH --time=0-10:00
+
 
 module purge
 module load parallel
